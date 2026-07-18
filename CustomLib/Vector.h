@@ -1,8 +1,11 @@
 #pragma once
 
 #include <cstddef>
+#include <algorithm>
 #include <utility>
 #include <cassert>
+
+#include "ContainerIterator.h"
 
 template<typename T>
 class Vector
@@ -139,12 +142,7 @@ public:
 
         if (size < mSize)
         {
-            //destroy elements above current size
-            for (std::size_t i = size; i < mSize; ++i)
-            {
-                //call destructor of unused elements
-                mValues[i].~T();
-            }
+            // The elements remain allocated and can be reused if the vector grows again.
         }
         else if (mSize < size)
         {
@@ -153,7 +151,7 @@ public:
             for (std::size_t i = mSize; i < size; ++i)
             {
                 mValues[i] = initialValue;
-            }
+                }
         }
         mSize = size;
     }
@@ -187,22 +185,28 @@ public:
     // remove element from the back
     void PopBack()
     {
-        assert(mSize > 0, "No elements in the vector");
+        assert(mSize > 0 && "No elements in the vector");
         Resize(mSize - 1);
     }
     //operator[]
     T& operator[](std::size_t index)
     {
-        assert(index < mSize, "Index out of range");
+        assert(index < mSize && "Index out of range");
         return mValues[index];
     }
 
     const T& operator[](std::size_t index) const
     {
-        assert(index < mSize, "Index out of range");
+        assert(index < mSize && "Index out of range");
         return mValues[index];
     }
 
+    using Iterator = ContainerIterator <T>;
+    using Const_Iterator = ContainerIterator<const T>;
+    Iterator Begin() { return Iterator(mValues); }
+    Iterator End() { return Iterator(mValues + mSize); }
+    Const_Iterator Begin() const { return Const_Iterator(mValues); }
+    Const_Iterator End() const { return Const_Iterator(mValues + mSize); }
 private:
 
     T* mValues = nullptr;

@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <utility>
 
+#include "ContainerIterator.h"
+
 template<typename T, std::size_t N>
 class Array
 {
@@ -106,6 +108,15 @@ public:
 	{
 		return mValues[index];
 	}
+
+	//iterator defs
+	using Iterator = ContainerIterator <T>;
+	using Const_Iterator = ContainerIterator<const T>;
+	Iterator Begin() { return Iterator(mValues); }
+	Iterator End() { return Iterator(mValues + N); }
+	Const_Iterator Begin() const { return Const_Iterator(mValues); }
+	Const_Iterator End() const { return Const_Iterator(mValues + N); }
+			
 
 private:
 	//T is the type we declare

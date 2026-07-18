@@ -1,0 +1,54 @@
+#pragma once
+
+//gives accessibility to iterator functions
+//can be tied into and used with std::sorting functions(std::sort, priority queue....)
+//iterate over containers instead of indexing through them
+
+#include <algorithm>
+#include <iterator>
+#include <cstddef>
+
+
+template <typename T>
+class ContainerIterator {
+public:
+	//define ids/names for stl use (sort, find,find_if)
+	using iterator_category = std::random_access_iterator_tag;
+	using value_type = T;
+	using difference_type = std::ptrdiff_t;
+	using pointer = T*;
+	using reference = T&;
+
+public:
+	// >[][][][][][][][][][]
+	ContainerIterator(T* ptr) : mPtr(ptr){}
+
+	T& operator*() { return *mPtr; }
+	T* operator->() { return mPtr; }
+
+	//++iter
+	ContainerIterator& operator++() { ++mPtr; return *this; }
+	//--iter
+	ContainerIterator& operator--() { --mPtr; return *this; }
+	ContainerIterator& operator++(int) { ContainerIterator tmp = *this; ++(*this); return tmp; }
+	//iter++
+	ContainerIterator& operator--(int) { ContainerIterator tmp = *this; --(*this); return tmp; }
+	//iter--
+
+	ContainerIterator& operator+(difference_type n)const { return ContainerIterator(mPtr + n); }
+	ContainerIterator& operator-(difference_type n)const { return ContainerIterator(mPtr - n); }
+	ContainerIterator& operator+=(difference_type n) { mPtr += n; return *this; }
+	ContainerIterator& operator-=(difference_type n) { mPtr -= n; return *this; }
+
+	difference_type operator-(const ContainerIterator& rhs) const { return mPtr - rhs.mPtr; }
+
+	bool operator==(const ContainerIterator& rhs) const { return mPtr == rhs.mPtr; }
+	bool operator!=(const ContainerIterator& rhs) const { return mPtr != rhs.mPtr; }
+	bool operator<(const ContainerIterator& rhs) const { return mPtr < rhs.mPtr; }
+	bool operator>(const ContainerIterator& rhs) const { return mPtr > rhs.mPtr; }
+	bool operator<=(const ContainerIterator& rhs) const { return mPtr <= rhs.mPtr; }
+	bool operator>=(const ContainerIterator& rhs) const { return mPtr >= rhs.mPtr; }
+private:
+	T* mPtr = nullptr;
+};
+
